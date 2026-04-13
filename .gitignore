@@ -2,3 +2,6 @@
 *.csv
 data/raw/*.csv
 data/processed/*.csv
+.agents/skills/autofix
+.claude/skills/autofix
+skills-lock.json
