@@ -1,0 +1,4 @@
+# Ignore all CSV files to prevent pushing large datasets to GitHub
+*.csv
+data/raw/*.csv
+data/processed/*.csv

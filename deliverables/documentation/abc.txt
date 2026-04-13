@@ -1,0 +1,37 @@
+Here is a complete breakdown of the 87 new features we created during the merge, where they came from, and how they were calculated.
+
+The core logic for merging is based on Co_Ref (the customer) and the Year. For a given customer's renewal year, we aggregated their interactions from the other three datasets.
+
+1. Email Features (27 Features) — Pre-Renewal Signals
+How they were calculated: All emails in the dataset happen before a renewal. We grouped all emails for a specific Co_Ref and year.
+
+Total Count (em_email_count): The total number of emails exchanged with the customer that year.
+Flag Proportions (19 Features): For columns that were originally "Yes/No" (like crm_customer_complained, crm_competitors_mentioned, crm_refund_mentioned), we converted "Yes" to 1 and "No" to 0, then took the mean.
+Example: If a customer sent 10 emails, and 3 of them flagged crm_customer_complained, the em_crm_customer_complained feature will be 0.3.
+Sentiment Scores (em_sentiment_score_mean, em_sentiment_score_max): The average and highest sentiment score across all their emails for that year.
+Agent Chases (em_agent_chase_total, em_agent_chase_max): The sum and maximum number of times an agent had to chase the customer.
+Auto Renewal (em_auto_renewal_status_max): A 1/0 flag if auto-renewal was active/mentioned at any point across those emails.
+Categorical Modes (em_sentiment_mode, em_membership_level_mode): The most frequently occurring string value (the mode) for sentiment category and membership level.
+2. CC Calls Features (26 Features) — Pre-Renewal Signals
+How they were calculated: We strictly filtered Customer Care calls to only include calls where Call_Date was BEFORE the Renewal_Month. We then grouped by Co_Ref and Call_Year.
+
+Total Count (cc_call_count): The total number of customer care calls made before their renewal date.
+Flag Proportions (20 Features): Just like emails, we calculated the proportion of care calls involving specific issues.
+Examples: cc_login_issues, cc_platform_issues, cc_dissatisfaction_support, cc_refund_discussed, and cc_pricing_sentiment_impact.
+Sentiment Scores (4 Features): The average scores during the call for start sentiment, end sentiment, overall sentiment, and issues sentiment (cc_sent_start_score_mean, cc_sent_end_score_mean, etc.).
+Categorical Mode (cc_sentiment_mode): The most frequently occurring sentiment category across those pre-renewal calls.
+3. Renewal Calls Features (34 Features) — Post-Renewal Signals
+How they were calculated: As you requested, we strictly filtered these to only include calls where Call_Date was AFTER the Renewal_Month. We then grouped by Co_Ref and Call_Year.
+
+Total Count (ren_call_count): The total number of post-renewal calls it took to handle the customer.
+Flag Proportions (17 Features): The proportion of post-renewal calls that registered certain behaviors.
+Examples: ren_explicit_switching_intent, ren_discount_offered, ren_serious_complaint, ren_price_switching_mentioned.
+Friction & Length (ren_friction_score_mean, ren_friction_score_max, ren_call_length_mean): The average and maximum friction scores, as well as the average call length score.
+Effort (ren_max_call_number): The highest call attempt number (e.g., if this group reached Call Number 5, this value is 5, showing it took 5 calls to resolve them).
+Categorical Modes (12 Features): The most frequent string values assigned during these post-renewal negotiations.
+Examples: ren_churn_category_mode, ren_complaint_category_mode, ren_customer_reaction_category_mode, ren_membership_renewal_decision_mode.
+Default Fallbacks for Nulls
+If a customer had no interactions in a specific dataset (e.g., they paid their bill but never called Customer Care):
+
+All count and numeric/proportion features were filled with 0.
+All categorical "mode" features were filled with the text "No Interaction".
