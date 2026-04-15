@@ -146,7 +146,7 @@ Main cleaning steps:
   - `Satisfied`
   - `Not Discussed`
 - Converted sentiment score columns to numeric and filled with median.
-- Parsed `Call_Date`
+- Parsed `Call_Date`.
 
 ### 3. Emails / CRM cleaning
 
